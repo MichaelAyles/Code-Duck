@@ -1,15 +1,36 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
+import jwt from "@fastify/jwt";
+import cookie from "@fastify/cookie";
 import dotenv from "dotenv";
+import { authRoutes } from "./routes/auth";
+import { githubRoutes } from "./routes/github";
 
 dotenv.config();
 
 const app = Fastify({ logger: true });
 
+// JWT secret
+const JWT_SECRET = process.env.JWT_SECRET || "development-secret-key-change-in-production";
+
+// Register plugins
 app.register(cors, {
   origin: true,
   credentials: true
 });
+
+app.register(jwt, {
+  secret: JWT_SECRET,
+  sign: {
+    expiresIn: '7d'
+  }
+});
+
+app.register(cookie);
+
+// Register routes
+app.register(authRoutes, { prefix: '/api/auth' });
+app.register(githubRoutes, { prefix: '/api/github' });
 
 app.get("/", async () => ({ 
   status: "live",

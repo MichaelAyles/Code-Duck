@@ -1,20 +1,28 @@
 services:
+  # A Node.js web service
   - type: web
     name: backend
     env: node
-    repo: https://github.com/YOUR_USERNAME/code-duck.git # Replace with your repo URL
-    branch: main
     rootDir: backend
-    buildCommand: npm install && npm run build
-    startCommand: npm run start
+    buildCommand: "npm install && npm run build"
+    startCommand: "npm run start"
     envVars:
       - key: DATABASE_URL
         fromDatabase:
           name: postgres
           property: connectionString
-      - key: NODE_VERSION
-        value: 18
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: redis
+          property: connectionString
 
+  # A PostgreSQL database
   - type: psql
     name: postgres
-    ipAllowList: [] # Allow all IPs to connect
+    plan: free # optional
+
+  # A Redis instance
+  - type: redis
+    name: redis
+    plan: free # optional

@@ -5,6 +5,7 @@ import cookie from "@fastify/cookie";
 import dotenv from "dotenv";
 import { authRoutes } from "./routes/auth";
 import { githubRoutes } from "./routes/github";
+import { aiRoutes } from "./routes/ai";
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ app.register(cookie);
 // Register routes
 app.register(authRoutes, { prefix: '/api/auth' });
 app.register(githubRoutes, { prefix: '/api/github' });
+app.register(aiRoutes, { prefix: '/api/ai' });
 
 app.get("/", async () => ({ 
   status: "live",

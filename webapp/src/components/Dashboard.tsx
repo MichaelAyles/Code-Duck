@@ -6,9 +6,10 @@ import { githubService } from '../services/github';
 
 interface DashboardProps {
   onLogout: () => void;
+  onShowAIChat: () => void;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
+export const Dashboard: React.FC<DashboardProps> = ({ onLogout, onShowAIChat }) => {
   const [user, setUser] = useState<User | null>(null);
   const [apiStatus, setApiStatus] = useState('Testing...');
   const [stats, setStats] = useState({
@@ -124,6 +125,30 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
             className="progress-fill"
             style={{ width: `${(stats.aiRequestsToday / stats.dailyLimit) * 100}%` }}
           />
+        </div>
+      </div>
+
+      <div className="section">
+        <h2 className="section-title">AI Features</h2>
+        
+        <div
+          className="integration-card ai-feature"
+          onClick={onShowAIChat}
+          style={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: 'white',
+            border: 'none'
+          }}
+        >
+          <div>
+            <div className="integration-title" style={{ color: 'white' }}>
+              🤖 Code Explain
+            </div>
+            <div className="integration-status" style={{ color: 'rgba(255,255,255,0.9)' }}>
+              Analyze and understand code
+            </div>
+          </div>
+          <div style={{ fontSize: '24px' }}>→</div>
         </div>
       </div>
 

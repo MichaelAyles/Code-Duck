@@ -3,10 +3,11 @@ import { Dashboard } from './components/Dashboard';
 import { LoginScreen } from './components/LoginScreen';
 import { RegisterScreen } from './components/RegisterScreen';
 import { GitHubCallback } from './components/GitHubCallback';
+import { AIChat } from './components/AIChat';
 import { authService } from './services/auth';
 import './styles/mobile.css';
 
-type Screen = 'login' | 'register' | 'dashboard' | 'github-callback';
+type Screen = 'login' | 'register' | 'dashboard' | 'github-callback' | 'ai-chat';
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('login');
@@ -69,6 +70,14 @@ function App() {
     setCurrentScreen('dashboard');
   };
 
+  const handleShowAIChat = () => {
+    setCurrentScreen('ai-chat');
+  };
+
+  const handleBackToDashboard = () => {
+    setCurrentScreen('dashboard');
+  };
+
   if (isLoading) {
     return (
       <div className="loading">
@@ -80,7 +89,10 @@ function App() {
   return (
     <div className="App">
       {currentScreen === 'dashboard' && (
-        <Dashboard onLogout={handleLogout} />
+        <Dashboard 
+          onLogout={handleLogout}
+          onShowAIChat={handleShowAIChat}
+        />
       )}
       
       {currentScreen === 'login' && (
@@ -102,6 +114,10 @@ function App() {
           onSuccess={handleGitHubSuccess}
           onError={handleGitHubError}
         />
+      )}
+
+      {currentScreen === 'ai-chat' && (
+        <AIChat onBack={handleBackToDashboard} />
       )}
     </div>
   );

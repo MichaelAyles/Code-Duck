@@ -54,12 +54,14 @@ model TrelloAccount {
 }
 
 model AIRequest {
-  id        String   @id @default(cuid())
-  userId    String
-  command   String
-  response  String?
-  status    String   @default("pending")
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  userId     String
+  type       String
+  inputData  Json
+  outputData Json?
+  tokensUsed Int      @default(0)
+  status     String   @default("completed")
+  createdAt  DateTime @default(now())
   
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

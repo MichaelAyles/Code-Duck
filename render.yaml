@@ -20,8 +20,6 @@ services:
   # A PostgreSQL database
   - type: pserv
     name: postgres
-    databaseName: codeduck
-    databaseUser: codeduck
     plan: free
 
   # A Redis instance

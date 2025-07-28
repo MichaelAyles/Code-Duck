@@ -18,7 +18,7 @@ services:
           property: connectionString
 
   # A PostgreSQL database
-  - type: psql
+  - type: pserv
     name: postgres
     plan: free # optional
 

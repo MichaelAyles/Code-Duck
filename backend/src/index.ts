@@ -46,12 +46,13 @@ app.get("/health", async () => ({
 
 const start = async () => {
   try {
-    const port = parseInt(process.env.PORT || "3000");
+    const port = parseInt(process.env.PORT || "4000");
     await app.listen({ 
       port,
       host: "0.0.0.0"
     });
     app.log.info(`Server listening on port ${port}`);
+    console.log(`\n🚀 Backend Debug: http://100.79.131.40:4001\n`);
   } catch (err) {
     app.log.error(err);
     process.exit(1);

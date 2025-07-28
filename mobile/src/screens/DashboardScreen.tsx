@@ -11,6 +11,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../config/api';
 import { User } from '../types';
+import { testApiConnection, testHealthEndpoint } from '../services/apiTest';
 
 interface DashboardScreenProps {
   navigation: any;
@@ -25,10 +26,21 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
     aiRequestsToday: 0,
     dailyLimit: 15,
   });
+  const [apiStatus, setApiStatus] = useState('Testing...');
 
   useEffect(() => {
     loadUserData();
+    testBackendConnection();
   }, []);
+
+  const testBackendConnection = async () => {
+    const result = await testApiConnection();
+    if (result.success) {
+      setApiStatus(`✅ Backend Connected - ${result.data.message}`);
+    } else {
+      setApiStatus('❌ Backend Connection Failed');
+    }
+  };
 
   const loadUserData = async () => {
     try {
@@ -37,17 +49,22 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
         setUser(JSON.parse(userData));
       }
       
-      // Load user stats from API
-      const response = await api.get('/api/auth/me');
-      if (response.data.user) {
-        setUser(response.data.user);
-        setStats({
-          githubConnected: response.data.user._count.githubAccounts > 0,
-          trelloConnected: response.data.user._count.trelloAccounts > 0,
-          aiRequestsToday: response.data.user._count.aiRequests || 0,
-          dailyLimit: response.data.user.tier === 'PRO' ? 200 : 15,
-        });
-      }
+      // For now, just use mock data since auth isn't implemented yet
+      setUser({
+        id: '1',
+        email: 'test@example.com',
+        name: 'Test User',
+        tier: 'FREE'
+      });
+      setStats({
+        githubConnected: false,
+        trelloConnected: false,
+        aiRequestsToday: 5,
+        dailyLimit: 15,
+      });
+      
+      // TODO: Enable this when auth is working
+      // const response = await api.get('/api/auth/me');
     } catch (error) {
       console.error('Failed to load user data:', error);
     }
@@ -89,6 +106,11 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
         <TouchableOpacity onPress={handleLogout}>
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
+      </View>
+
+      <View style={styles.statsCard}>
+        <Text style={styles.cardTitle}>Backend Status</Text>
+        <Text style={styles.apiStatusText}>{apiStatus}</Text>
       </View>
 
       <View style={styles.statsCard}>
@@ -190,6 +212,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#007AFF',
     marginBottom: 12,
+  },
+  apiStatusText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#333',
   },
   progressBar: {
     height: 8,

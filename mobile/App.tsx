@@ -61,8 +61,11 @@ function App() {
 
   const checkAuthStatus = async () => {
     try {
-      const token = await AsyncStorage.getItem('authToken');
-      setIsAuthenticated(!!token);
+      // For testing purposes, skip auth and go straight to dashboard
+      // TODO: Re-enable auth check when authentication is implemented
+      // const token = await AsyncStorage.getItem('authToken');
+      // setIsAuthenticated(!!token);
+      setIsAuthenticated(true); // Skip auth for testing
     } catch (error) {
       console.error('Error checking auth status:', error);
     } finally {

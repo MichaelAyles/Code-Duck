@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { User } from '../types';
 import { testApiConnection } from '../services/apiTest';
+import { authService } from '../services/auth';
+import { githubService } from '../services/github';
 
 interface DashboardProps {
   onLogout: () => void;
@@ -36,23 +38,51 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
     }
   };
 
-  const loadUserData = () => {
-    // Mock user data for testing
-    setUser({
-      id: '1',
-      email: 'test@example.com',
-      name: 'Test User',
-      tier: 'FREE'
-    });
+  const loadUserData = async () => {
+    try {
+      // First try to get user from localStorage
+      const storedUser = authService.getStoredUser();
+      if (storedUser) {
+        setUser(storedUser);
+      }
+
+      // Then fetch fresh data from API
+      const response = await authService.getCurrentUser();
+      if (response.user) {
+        setUser(response.user);
+        
+        // Update stats if we have count data
+        if ('_count' in response.user) {
+          const countData = (response.user as any)._count;
+          setStats({
+            githubConnected: countData.githubAccounts > 0,
+            trelloConnected: countData.trelloAccounts > 0,
+            aiRequestsToday: countData.aiRequests || 0,
+            dailyLimit: response.user.tier === 'PRO' ? 200 : 15,
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load user data:', error);
+      // If API fails, keep using stored user data
+      const storedUser = authService.getStoredUser();
+      if (storedUser) {
+        setUser(storedUser);
+      }
+    }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('authToken');
+    authService.logout();
     onLogout();
   };
 
   const handleGitHubConnect = () => {
-    alert('GitHub OAuth integration coming soon!');
+    if (stats.githubConnected) {
+      alert('GitHub already connected! Repository features coming soon.');
+    } else {
+      githubService.initiateOAuth();
+    }
   };
 
   const handleUpgrade = () => {

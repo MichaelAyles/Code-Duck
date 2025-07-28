@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Dashboard } from './components/Dashboard';
+import { LoginScreen } from './components/LoginScreen';
+import { RegisterScreen } from './components/RegisterScreen';
+import { GitHubCallback } from './components/GitHubCallback';
+import { authService } from './services/auth';
 import './styles/mobile.css';
 
+type Screen = 'login' | 'register' | 'dashboard' | 'github-callback';
+
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentScreen, setCurrentScreen] = useState<Screen>('login');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -11,19 +17,56 @@ function App() {
   }, []);
 
   const checkAuthStatus = () => {
-    // For testing purposes, skip auth and go straight to dashboard
-    // TODO: Re-enable auth check when authentication is implemented
-    // const token = localStorage.getItem('authToken');
-    // setIsAuthenticated(!!token);
+    // Check if this is a GitHub OAuth callback
+    const urlParams = new URLSearchParams(window.location.search);
+    const isGitHubCallback = urlParams.has('code') && window.location.pathname === '/auth/github/callback';
+    
+    if (isGitHubCallback) {
+      setCurrentScreen('github-callback');
+      setIsLoading(false);
+      return;
+    }
+    
+    // Check if user is already authenticated
+    const isAuth = authService.isAuthenticated();
     
     setTimeout(() => {
-      setIsAuthenticated(true); // Skip auth for testing
+      setCurrentScreen(isAuth ? 'dashboard' : 'login');
       setIsLoading(false);
     }, 500);
   };
 
+  const handleLoginSuccess = () => {
+    setCurrentScreen('dashboard');
+  };
+
+  const handleRegisterSuccess = () => {
+    setCurrentScreen('dashboard');
+  };
+
   const handleLogout = () => {
-    setIsAuthenticated(false);
+    authService.logout();
+    setCurrentScreen('login');
+  };
+
+  const handleShowRegister = () => {
+    setCurrentScreen('register');
+  };
+
+  const handleShowLogin = () => {
+    setCurrentScreen('login');
+  };
+
+  const handleGitHubSuccess = () => {
+    // Clear URL params and redirect to dashboard
+    window.history.pushState({}, '', '/');
+    setCurrentScreen('dashboard');
+  };
+
+  const handleGitHubError = (error: string) => {
+    // Clear URL params and redirect to dashboard
+    window.history.pushState({}, '', '/');
+    setCurrentScreen('dashboard');
   };
 
   if (isLoading) {
@@ -36,22 +79,29 @@ function App() {
 
   return (
     <div className="App">
-      {isAuthenticated ? (
+      {currentScreen === 'dashboard' && (
         <Dashboard onLogout={handleLogout} />
-      ) : (
-        <div className="container">
-          <div style={{ padding: '40px 20px', textAlign: 'center' }}>
-            <h1>CodeDuck</h1>
-            <p>Mobile AI Coding Assistant</p>
-            <button 
-              className="btn btn-primary" 
-              style={{ marginTop: '20px' }}
-              onClick={() => setIsAuthenticated(true)}
-            >
-              Skip to Dashboard (Testing)
-            </button>
-          </div>
-        </div>
+      )}
+      
+      {currentScreen === 'login' && (
+        <LoginScreen 
+          onLoginSuccess={handleLoginSuccess}
+          onShowRegister={handleShowRegister}
+        />
+      )}
+      
+      {currentScreen === 'register' && (
+        <RegisterScreen 
+          onRegisterSuccess={handleRegisterSuccess}
+          onShowLogin={handleShowLogin}
+        />
+      )}
+      
+      {currentScreen === 'github-callback' && (
+        <GitHubCallback 
+          onSuccess={handleGitHubSuccess}
+          onError={handleGitHubError}
+        />
       )}
     </div>
   );

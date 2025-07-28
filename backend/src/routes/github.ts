@@ -13,7 +13,7 @@ interface GitHubTokenResponse {
 export async function githubRoutes(app: FastifyInstance) {
   const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID || '';
   const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET || '';
-  const GITHUB_REDIRECT_URI = process.env.GITHUB_REDIRECT_URI || 'http://localhost:3000/api/github/callback';
+  const GITHUB_REDIRECT_URI = process.env.GITHUB_REDIRECT_URI || 'http://100.79.131.40:3002/auth/github/callback';
 
   // GitHub OAuth URL
   app.get('/auth', async (_request, reply) => {
@@ -21,7 +21,7 @@ export async function githubRoutes(app: FastifyInstance) {
     return reply.send({ url: authUrl });
   });
 
-  // GitHub OAuth callback
+  // GitHub OAuth callback for account linking (requires authentication)
   app.get<{ Querystring: { code: string } }>('/callback', async (request, reply) => {
     const { code } = request.query;
 
@@ -101,6 +101,135 @@ export async function githubRoutes(app: FastifyInstance) {
       app.log.error(error);
       return reply.code(500).send({ error: 'Failed to authenticate with GitHub' });
     }
+  });
+
+  // GitHub OAuth login (creates user account if needed)
+  app.get<{ Querystring: { code: string } }>('/login-callback', async (request, reply) => {
+    const { code } = request.query;
+
+    if (!code) {
+      return reply.code(400).send({ error: 'No code provided' });
+    }
+
+    try {
+      // Exchange code for access token
+      const tokenResponse = await axios.post<GitHubTokenResponse>(
+        'https://github.com/login/oauth/access_token',
+        {
+          client_id: GITHUB_CLIENT_ID,
+          client_secret: GITHUB_CLIENT_SECRET,
+          code,
+          redirect_uri: GITHUB_REDIRECT_URI
+        },
+        {
+          headers: {
+            Accept: 'application/json'
+          }
+        }
+      );
+
+      const { access_token } = tokenResponse.data;
+
+      // Get GitHub user info
+      const octokit = new Octokit({ auth: access_token });
+      const { data: githubUser } = await octokit.users.getAuthenticated();
+      
+      // Get primary email if not public
+      let email = githubUser.email;
+      if (!email) {
+        const { data: emails } = await octokit.users.listEmailsForAuthenticatedUser();
+        const primaryEmail = emails.find(e => e.primary);
+        email = primaryEmail?.email || null;
+      }
+
+      if (!email) {
+        return reply.code(400).send({ error: 'GitHub account must have a public email address' });
+      }
+
+      // Check if GitHub account already exists
+      let existingGitHub = await prisma.gitHubAccount.findUnique({
+        where: { githubId: githubUser.id.toString() },
+        include: { user: true }
+      });
+
+      let user;
+
+      if (existingGitHub) {
+        // User exists, log them in
+        user = existingGitHub.user;
+        
+        // Update GitHub account info
+        await prisma.gitHubAccount.update({
+          where: { id: existingGitHub.id },
+          data: {
+            accessToken: access_token,
+            username: githubUser.login,
+            updatedAt: new Date()
+          }
+        });
+      } else {
+        // Check if user exists by email
+        const existingUser = await prisma.user.findUnique({
+          where: { email }
+        });
+
+        if (existingUser) {
+          // Link GitHub to existing user
+          user = existingUser;
+          await prisma.gitHubAccount.create({
+            data: {
+              userId: user.id,
+              githubId: githubUser.id.toString(),
+              username: githubUser.login,
+              accessToken: access_token
+            }
+          });
+        } else {
+          // Create new user and link GitHub
+          user = await prisma.user.create({
+            data: {
+              email,
+              name: githubUser.name || githubUser.login,
+              password: '', // No password for GitHub-only users
+              githubAccounts: {
+                create: {
+                  githubId: githubUser.id.toString(),
+                  username: githubUser.login,
+                  accessToken: access_token
+                }
+              }
+            }
+          });
+        }
+      }
+
+      // Generate JWT token
+      const token = app.jwt.sign({ 
+        id: user.id, 
+        email: user.email,
+        tier: user.tier 
+      });
+
+      return reply.send({ 
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          tier: user.tier,
+          createdAt: user.createdAt
+        }, 
+        token 
+      });
+    } catch (error) {
+      app.log.error(error);
+      return reply.code(500).send({ error: 'Failed to authenticate with GitHub' });
+    }
+  });
+
+  // GitHub OAuth URL for login
+  app.get('/login-auth', async (_request, reply) => {
+    const authUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${GITHUB_REDIRECT_URI}&scope=user:email`;
+    return reply.send({ url: authUrl });
   });
 
   // Get user's repositories

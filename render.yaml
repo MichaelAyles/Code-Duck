@@ -34,5 +34,3 @@ databases:
   # PostgreSQL database
   - name: codeduck-postgres
     plan: free
-    databaseName: codeduck
-    databaseUser: codeduck

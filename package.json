@@ -1,0 +1,18 @@
+{
+  "name": "code-duck",
+  "version": "1.0.0",
+  "description": "Mobile AI Coding Assistant",
+  "scripts": {
+    "dev": "node scripts/dev.js",
+    "dev:all": "npm run dev:backend & npm run dev:frontend",
+    "dev:backend": "docker-compose up",
+    "dev:frontend": "cd webapp && npm run dev",
+    "dev:force": "npm run dev:frontend",
+    "install:all": "cd backend && npm install && cd ../webapp && npm install"
+  },
+  "author": "CodeDuck Team",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.11.0"
+  }
+}

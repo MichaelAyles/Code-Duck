@@ -1,11 +1,33 @@
 # CodeDuck Local Development Setup
 
-## Current Status
-✅ Backend running on Docker (PostgreSQL + Redis + API)  
-✅ Mobile app React Native project set up  
-✅ API connection configured for local development  
+## Overview
+CodeDuck uses a local-first development approach with Docker for services and a mobile-first React web app for rapid prototyping.
+
+## Prerequisites
+- Node.js 18+ installed
+- Docker & Docker Compose installed
+- Git
 
 ## Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/Code-Duck.git
+cd Code-Duck
+
+# Install dependencies
+npm install
+npm run install:all
+
+# Start everything with one command
+npm run dev
+```
+
+That's it! The script will:
+1. Check if backend is running
+2. Start Docker services if needed
+3. Launch the frontend
+4. Display clickable URLs
 
 ### 1. Start Backend Services
 ```bash

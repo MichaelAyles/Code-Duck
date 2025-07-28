@@ -1,0 +1,259 @@
+/* Mobile-first responsive design */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+  line-height: 1.5;
+}
+
+/* Mobile-first container */
+.container {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.greeting {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.logout-btn {
+  color: #007AFF;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.logout-btn:hover {
+  background-color: #f0f8ff;
+}
+
+/* Cards */
+.card {
+  background-color: #fff;
+  margin: 20px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.api-status {
+  font-size: 16px;
+  font-weight: 500;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.api-status.success {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.api-status.error {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+/* Stats */
+.stats-text {
+  font-size: 24px;
+  font-weight: bold;
+  color: #007AFF;
+  margin-bottom: 12px;
+}
+
+.progress-bar {
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #007AFF;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Section */
+.section {
+  padding: 0 20px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+/* Integration cards */
+.integration-card {
+  background-color: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.integration-card:hover {
+  border-color: #007AFF;
+  box-shadow: 0 2px 8px rgba(0,122,255,0.1);
+}
+
+.integration-card.connected {
+  border-color: #4CAF50;
+  background-color: #f8fff8;
+}
+
+.integration-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}
+
+.integration-status {
+  font-size: 14px;
+  color: #666;
+}
+
+/* Upgrade card */
+.upgrade-card {
+  background: linear-gradient(135deg, #007AFF, #0056d3);
+  margin: 20px;
+  padding: 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.upgrade-card:hover {
+  transform: translateY(-2px);
+}
+
+.upgrade-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.upgrade-text {
+  font-size: 14px;
+  color: #fff;
+  opacity: 0.9;
+}
+
+/* Loading spinner */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #007AFF;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Button styles */
+.btn {
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: #007AFF;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056d3;
+}
+
+.btn-secondary {
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.btn-secondary:hover {
+  background-color: #e5e5e5;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .container {
+    max-width: 400px;
+  }
+}
+
+/* Touch-friendly tap targets */
+@media (hover: none) {
+  .integration-card:hover {
+    border-color: #e0e0e0;
+    box-shadow: none;
+  }
+  
+  .integration-card:active {
+    background-color: #f5f5f5;
+  }
+}

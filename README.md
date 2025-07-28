@@ -2,123 +2,168 @@
 
 A mobile-first AI coding assistant that empowers developers to manage their entire coding workflow—from ideation to commit—directly from their mobile device.
 
+## 🚀 Quick Start
+
+```bash
+# Clone and start everything with one command
+git clone https://github.com/yourusername/Code-Duck.git
+cd Code-Duck
+npm run dev
+```
+
+That's it! Backend and frontend will start automatically.
+- 📱 Frontend: http://100.79.131.40:3002 (clickable in terminal)
+- 🔌 Backend API: http://localhost:4001
+
 ## Overview
 
-CodeDuck leverages AI to accelerate the development process, providing a seamless mobile experience for developers on the go. The app integrates with GitHub and Trello to offer a unified dashboard for managing development tasks, viewing code, and using AI to solve coding challenges.
+CodeDuck leverages AI to accelerate the development process, providing a seamless mobile experience for developers on the go. Built with a **local-first, rapid prototyping** approach using Docker and a mobile-optimized React web app.
 
-## Features
+## 🏗️ Architecture
 
-### Core Functionality
-- **Unified Dashboard**: View GitHub issues and Trello cards in one place
-- **GitHub Integration**: Browse repositories, view files with syntax highlighting, manage issues
-- **Trello Integration**: View boards, manage cards with drag-and-drop functionality
-- **AI-Powered Coding Assistant**: Chat-based interface with commands for code explanation, issue fixes, and code generation
+### Development Philosophy
+- **Local-First**: Everything runs on your machine via Docker
+- **Mobile-First Web**: React web app optimized for mobile, easily portable to React Native
+- **One Command Setup**: `npm run dev` starts everything
+- **Fast Iteration**: Hot reload, no build times, instant feedback
 
-### AI Commands
-- `explain file <file_path>`: Get natural language explanations of code
-- `propose fix for issue <issue_number>`: AI analyzes issues and proposes patches
-- `write code <prompt>`: Generate code from natural language descriptions
-- `commit`: Create commits with AI-generated messages
-- `create pull request`: Open PRs directly from the app
+### Tech Stack
 
-## Tech Stack
+**Frontend (Mobile Web App)**
+- **React with TypeScript**: Mobile-first responsive web app
+- **Axios**: API communication
+- **Mobile-Optimized CSS**: Touch-friendly, native app feel
 
-### Frontend
-- **React Native**: Cross-platform mobile development
-- **Key Libraries**:
-  - `@react-navigation/native`: Navigation
-  - `react-native-keychain`: Secure token storage
-  - `react-native-syntax-highlighter`: Code rendering
-  - `@revenuecat/react-native-purchases`: Monetization
-
-### Backend
-- **Node.js with TypeScript**: API server
+**Backend**
+- **Node.js with TypeScript**: API server on port 4000
 - **Fastify**: High-performance web framework
-- **PostgreSQL**: Primary database
-- **Redis + BullMQ**: Background job processing
-- **Key Integrations**:
-  - GitHub API via `@octokit/rest`
-  - Trello API
-  - OpenAI API for AI features
+- **PostgreSQL**: Database (via Docker)
+- **Redis**: Caching and job queues (via Docker)
+- **Prisma**: Type-safe ORM
 
-### Infrastructure
-- **Docker**: Containerization
-- **CI/CD**: GitHub Actions
-- **Deployment**: PaaS (Render/Fly.io)
+**Infrastructure**
+- **Docker Compose**: One-command local development
+- **Automatic Backend Detection**: Frontend checks if backend is running
+- **Smart Scripts**: `npm run dev` handles everything
 
-## Monetization
+## 📁 Project Structure
 
-CodeDuck uses a freemium model powered by RevenueCat:
+```
+Code-Duck/
+├── backend/               # Node.js API server
+│   ├── src/
+│   │   ├── routes/       # API endpoints
+│   │   ├── lib/          # Shared utilities
+│   │   └── index.ts      # Server entry point
+│   ├── prisma/           # Database schema
+│   └── Dockerfile        # Container config
+├── webapp/               # Mobile-first React app
+│   ├── src/
+│   │   ├── components/   # React components
+│   │   ├── services/     # API services
+│   │   └── styles/       # Mobile-first CSS
+│   └── scripts/          # Dev utilities
+├── mobile/               # React Native (future)
+├── docker-compose.yml    # Local services
+└── package.json         # Root scripts
+```
 
-### Free Tier (Hobbyist)
-- 1 private GitHub repository
-- 1 Trello board
-- 15 AI requests per day
-- Standard AI model (GPT-3.5-turbo)
-
-### Pro Tier ($9.99/month)
-- Unlimited repositories and boards
-- 200 AI requests per day
-- Premium AI models (GPT-4o)
-- Priority access to new features
-- Enhanced AI capabilities
-
-## Getting Started
+## 🛠️ Development Setup
 
 ### Prerequisites
 - Node.js 18+
-- PostgreSQL
-- Redis
-- React Native development environment
+- Docker & Docker Compose
+- Git
 
 ### Installation
 
-1. Clone the repository:
+1. **Clone and Install**
    ```bash
    git clone https://github.com/yourusername/Code-Duck.git
    cd Code-Duck
+   npm install          # Root dependencies
+   npm run install:all  # Backend + webapp dependencies
    ```
 
-2. Install dependencies:
+2. **Start Development**
    ```bash
-   # Backend
-   cd backend
-   npm install
-
-   # Frontend
-   cd ../mobile
-   npm install
+   npm run dev  # Starts backend (if needed) + frontend
    ```
 
-3. Set up environment variables:
-   ```bash
-   # Create .env files based on .env.example
-   cp backend/.env.example backend/.env
-   cp mobile/.env.example mobile/.env
-   ```
+### Available Commands
 
-4. Run the development servers:
-   ```bash
-   # Backend
-   cd backend
-   npm run dev
+From project root:
+- `npm run dev` - Start everything (checks backend first)
+- `npm run dev:backend` - Start only backend services
+- `npm run dev:frontend` - Start only frontend
+- `npm run dev:force` - Skip backend check
 
-   # Mobile (in a new terminal)
-   cd mobile
-   npm run ios  # or npm run android
-   ```
+## 🔌 API Endpoints
 
-## Contributing
+### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `GET /api/auth/me` - Get current user
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+### GitHub Integration
+- `GET /api/github/repos` - List user repositories
+- `GET /api/github/issues` - Get repository issues
 
-## License
+### AI Features (Coming Soon)
+- `POST /api/ai/explain` - Explain code
+- `POST /api/ai/fix` - Propose fixes
+- `POST /api/ai/generate` - Generate code
+
+## 💰 Monetization
+
+CodeDuck uses a freemium model:
+
+### Free Tier
+- 1 private GitHub repository
+- 15 AI requests per day
+- Basic AI model (Gemini Flash)
+
+### Pro Tier ($9.99/month)
+- Unlimited repositories
+- 200 AI requests per day
+- Premium AI models (GPT-4o)
+- Priority features
+
+## 🚧 Current Status
+
+✅ **Completed**
+- Docker-based local development
+- Mobile-first React web app
+- Backend API structure
+- Authentication endpoints
+- Auto-start development environment
+
+🔄 **In Progress**
+- Frontend authentication flow
+- GitHub OAuth integration
+- AI feature implementation
+
+📋 **Planned**
+- Trello integration
+- RevenueCat subscriptions
+- React Native port
+- Production deployment
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
+## 🏆 Hackathon Goals
 
-Built for the hackathon with the goal of winning:
-- **Best Vibes Award**: Creating a seamless mobile coding experience
-- **HAMM Award**: Well-designed freemium subscription model
-- **Grand Prize**: Early launch with demonstrated user adoption
+Built for winning:
+- **Best Vibes Award**: Seamless mobile coding experience
+- **HAMM Award**: Well-designed freemium model
+- **Grand Prize**: Rapid development and user adoption

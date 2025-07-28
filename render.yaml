@@ -20,9 +20,12 @@ services:
   # A PostgreSQL database
   - type: pserv
     name: postgres
-    plan: free # optional
+    databaseName: codeduck
+    databaseUser: codeduck
+    plan: free
 
   # A Redis instance
   - type: redis
     name: redis
-    plan: free # optional
+    plan: free
+    ipAllowList: []

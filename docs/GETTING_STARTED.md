@@ -8,7 +8,7 @@ Every feature is built on production from day one. No local-only development tha
 ### 1. Create Accounts (30 min)
 ```bash
 # Required immediately:
-[ ] Railway account (railway.app) - Connect GitHub
+[ ] Render account (railway.app) - Connect GitHub
 [ ] GitHub account (if needed)
 [ ] Google account for AI services
 
@@ -76,25 +76,16 @@ start();' > src/index.ts
 }
 ```
 
-### 4. Deploy to Railway IMMEDIATELY (20 min)
+### 4. Deploy to Render IMMEDIATELY (20 min)
+
 ```bash
-# Install Railway CLI
-npm install -g @railway/cli
+# No CLI needed! Render deploys directly from your `render.yaml` file.
+# 1. Create a Render account (render.com) and connect your GitHub.
+# 2. Create a new "Blueprint" and select your repository.
+# 3. Render will automatically detect and deploy your services based on `render.yaml`.
 
-# Login and initialize
-railway login
-railway init
-
-# Create services
-railway add postgresql
-railway add redis
-
-# Deploy (yes, right now!)
-railway up
-
-# Get your live URL
-railway domain
-# Your API is now live at: https://code-duck.up.railway.app
+# Get your live URL from the Render dashboard.
+# Your API will be live at: https://your-app-name.onrender.com
 ```
 
 ### 5. Verify Deployment (5 min)
@@ -131,7 +122,7 @@ echo "API_URL=https://your-app.up.railway.app" > .env
 ### 3. Set Up Auto-Deploy (30 min)
 Create `.github/workflows/deploy.yml`:
 ```yaml
-name: Deploy to Railway
+name: Deploy to Render
 on:
   push:
     branches: [main]
@@ -168,7 +159,7 @@ jobs:
 6. Add repo list screen
 
 ### Phase 3: First AI Feature (Day 5)
-1. Add AI provider credentials to Railway
+1. Add AI provider credentials to Render
 2. Create /ai/explain endpoint
 3. Add file viewer to mobile
 4. Connect explain feature
@@ -190,7 +181,7 @@ jobs:
 2. **Test on production** - Your local env doesn't matter
 3. **Mobile logs** - Use Flipper for debugging
 4. **Quick iteration** - Deploy 10+ times per day
-5. **User feedback** - Share Railway URL for testing
+5. **User feedback** - Share Render URL for testing
 
 ## Emergency Fixes
 

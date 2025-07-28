@@ -16,7 +16,7 @@ services:
           property: connectionString
       - key: REDIS_URL
         fromService:
-          type: redis
+          type: keyvalue
           name: codeduck-redis
           property: connectionString
       - key: JWT_SECRET
@@ -24,15 +24,15 @@ services:
       - key: PORT
         value: "3000"
 
-  # PostgreSQL database
-  - type: postgres
-    name: codeduck-postgres
-    plan: free
-    databaseName: codeduck
-    databaseUser: codeduck
-
   # Redis cache/queue
-  - type: redis
+  - type: keyvalue
     name: codeduck-redis
     plan: free
     ipAllowList: []
+
+databases:
+  # PostgreSQL database
+  - name: codeduck-postgres
+    plan: free
+    databaseName: codeduck
+    databaseUser: codeduck

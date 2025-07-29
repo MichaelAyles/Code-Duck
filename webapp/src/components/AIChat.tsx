@@ -3,12 +3,20 @@ import { aiService, ExplainRequest, ExplainResponse, UsageStats } from '../servi
 
 interface AIChatProps {
   onBack: () => void;
+  initialCode?: string;
+  initialLanguage?: string;
+  initialContext?: string;
 }
 
-export const AIChat: React.FC<AIChatProps> = ({ onBack }) => {
-  const [code, setCode] = useState('');
-  const [language, setLanguage] = useState('javascript');
-  const [context, setContext] = useState('');
+export const AIChat: React.FC<AIChatProps> = ({ 
+  onBack, 
+  initialCode, 
+  initialLanguage, 
+  initialContext 
+}) => {
+  const [code, setCode] = useState(initialCode || '');
+  const [language, setLanguage] = useState(initialLanguage || 'javascript');
+  const [context, setContext] = useState(initialContext || '');
   const [response, setResponse] = useState<ExplainResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -17,6 +25,13 @@ export const AIChat: React.FC<AIChatProps> = ({ onBack }) => {
   useEffect(() => {
     loadUsage();
   }, []);
+
+  // Update state when initial props change
+  useEffect(() => {
+    if (initialCode !== undefined) setCode(initialCode);
+    if (initialLanguage !== undefined) setLanguage(initialLanguage);
+    if (initialContext !== undefined) setContext(initialContext);
+  }, [initialCode, initialLanguage, initialContext]);
 
   const loadUsage = async () => {
     try {
@@ -116,6 +131,23 @@ export const AIChat: React.FC<AIChatProps> = ({ onBack }) => {
             )}
           </div>
         </div>
+
+        {/* Pre-populated Notice */}
+        {initialCode && (
+          <div style={{
+            backgroundColor: '#e3f2fd',
+            border: '1px solid #90caf9',
+            borderRadius: '8px',
+            padding: '12px 16px',
+            marginBottom: '20px',
+            fontSize: '14px',
+            color: '#1565c0'
+          }}>
+            <strong>✨ Code loaded from file viewer</strong>
+            <br />
+            Ready to analyze with AI - just click "Explain Code" below!
+          </div>
+        )}
 
         {/* Form */}
         <form onSubmit={handleSubmit}>

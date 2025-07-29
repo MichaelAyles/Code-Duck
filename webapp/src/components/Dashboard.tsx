@@ -7,9 +7,10 @@ import { githubService } from '../services/github';
 interface DashboardProps {
   onLogout: () => void;
   onShowAIChat: () => void;
+  onShowGitHubBrowser: () => void;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ onLogout, onShowAIChat }) => {
+export const Dashboard: React.FC<DashboardProps> = ({ onLogout, onShowAIChat, onShowGitHubBrowser }) => {
   const [user, setUser] = useState<User | null>(null);
   const [apiStatus, setApiStatus] = useState('Testing...');
   const [stats, setStats] = useState({
@@ -80,7 +81,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout, onShowAIChat }) 
 
   const handleGitHubConnect = () => {
     if (stats.githubConnected) {
-      alert('GitHub already connected! Repository features coming soon.');
+      onShowGitHubBrowser();
     } else {
       githubService.initiateOAuth();
     }
@@ -162,7 +163,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout, onShowAIChat }) 
           <div>
             <div className="integration-title">GitHub</div>
             <div className="integration-status">
-              {stats.githubConnected ? 'Connected ✓' : 'Tap to connect'}
+              {stats.githubConnected ? 'Browse repositories →' : 'Tap to connect'}
             </div>
           </div>
         </div>

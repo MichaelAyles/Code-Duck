@@ -31,7 +31,10 @@ CodeDuck leverages AI to accelerate the development process, providing a seamles
 
 **Frontend (Mobile Web App)**
 - **React with TypeScript**: Mobile-first responsive web app
+- **React Router**: Navigation and routing
 - **Axios**: API communication
+- **Prism.js**: Syntax highlighting for code viewing
+- **CSS Variables**: Modern theming system
 - **Mobile-Optimized CSS**: Touch-friendly, native app feel
 
 **Backend**
@@ -40,6 +43,13 @@ CodeDuck leverages AI to accelerate the development process, providing a seamles
 - **PostgreSQL**: Database (via Docker)
 - **Redis**: Caching and job queues (via Docker)
 - **Prisma**: Type-safe ORM
+- **JWT**: Secure authentication
+- **bcrypt**: Password hashing
+
+**AI Integration**
+- **OpenRouter API**: AI service routing
+- **Google Gemini 2.5 Flash Lite**: Primary AI model
+- **Structured JSON responses**: Consistent AI output
 
 **Infrastructure**
 - **Docker Compose**: One-command local development
@@ -106,13 +116,18 @@ From project root:
 - `GET /api/auth/me` - Get current user
 
 ### GitHub Integration
+- `GET /api/github/auth` - Get GitHub OAuth URL
+- `GET /api/github/login-auth` - GitHub OAuth login URL
+- `GET /api/github/login-callback` - GitHub OAuth callback (creates user if needed)
+- `GET /api/github/callback` - GitHub OAuth callback (links to existing user)
 - `GET /api/github/repos` - List user repositories
-- `GET /api/github/issues` - Get repository issues
+- `GET /api/github/repos/:owner/:repo/contents` - Browse repository files
+- `GET /api/github/repos/:owner/:repo/contents/*path` - Get file content
 
-### AI Features (Coming Soon)
-- `POST /api/ai/explain` - Explain code
-- `POST /api/ai/fix` - Propose fixes
-- `POST /api/ai/generate` - Generate code
+### AI Features
+- `POST /api/ai/explain` - Explain code with Gemini 2.5 Flash Lite
+- `GET /api/ai/usage` - Get usage statistics
+- `GET /api/ai/history` - Get AI request history
 
 ## 💰 Monetization
 
@@ -132,22 +147,30 @@ CodeDuck uses a freemium model:
 ## 🚧 Current Status
 
 ✅ **Completed**
-- Docker-based local development
-- Mobile-first React web app
-- Backend API structure
-- Authentication endpoints
-- Auto-start development environment
+- Docker-based local development environment
+- Mobile-first React web app with responsive design
+- Backend API with Fastify + TypeScript
+- User authentication (JWT-based register/login)
+- GitHub OAuth integration (login & repository access)
+- Modern UI with hamburger menu navigation
+- GitHub repository browser with file viewer
+- Syntax highlighting for 20+ languages
+- AI code analysis with OpenRouter/Gemini 2.5 Flash Lite
+- Single repository workflow
+- AI chat with code pre-population from file viewer
+- Usage tracking and rate limiting (15/day free, 200/day pro)
 
 🔄 **In Progress**
-- Frontend authentication flow
-- GitHub OAuth integration
-- AI feature implementation
+- Code editing and commit functionality
+- Background job processing with BullMQ
 
 📋 **Planned**
-- Trello integration
-- RevenueCat subscriptions
-- React Native port
-- Production deployment
+- Trello integration for task management
+- RevenueCat subscription management
+- Full-text code search
+- Push notifications
+- React Native mobile app
+- Production deployment to Railway/Render
 
 ## 🤝 Contributing
 

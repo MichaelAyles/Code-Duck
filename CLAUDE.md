@@ -8,18 +8,28 @@ CodeDuck is a mobile-first AI coding assistant that allows developers to manage 
 
 ## Architecture
 
-The codebase is organized into three main directories:
+The codebase is organized into four main directories:
 - `/backend/` - Node.js/TypeScript API server using Fastify
-- `/mobile/` - React Native mobile application
+- `/webapp/` - Mobile-first React web application (primary frontend)
+- `/mobile/` - React Native mobile application (future development)
 - `/docs/` - Project documentation and business plan
 
 ### Backend Architecture
 - **Framework**: Fastify with TypeScript
 - **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: JWT with bcrypt password hashing
-- **Key integrations**: GitHub OAuth (via @octokit/rest), planned Trello integration
+- **AI Integration**: OpenRouter API with Google Gemini 2.5 Flash Lite
+- **Key integrations**: GitHub OAuth (fully implemented), Trello (planned)
 
-### Mobile Architecture
+### Web App Architecture
+- **Framework**: React 18 with TypeScript
+- **Routing**: React Router v6
+- **Styling**: CSS Variables with mobile-first responsive design
+- **Code Highlighting**: Prism.js for syntax highlighting
+- **API Communication**: Axios for backend integration
+- **State Management**: React hooks and context
+
+### Mobile Architecture (Future)
 - **Framework**: React Native 0.80.2
 - **Navigation**: React Navigation (stack + bottom tabs)
 - **Storage**: AsyncStorage for auth tokens, react-native-keychain for secure storage
@@ -37,7 +47,15 @@ npm run prisma:migrate    # Run database migrations
 npm run prisma:studio     # Open Prisma Studio (database GUI)
 ```
 
-### Mobile Development
+### Web App Development
+```bash
+cd webapp
+npm start            # Development server on port 3000
+npm run build        # Production build
+npm test             # Run tests
+```
+
+### Mobile Development (Future)
 ```bash
 cd mobile
 npm run android      # Run on Android device/emulator
@@ -59,28 +77,38 @@ Key entities in the Prisma schema:
 
 The backend exposes these main route groups:
 - `/api/auth/*` - User authentication (register, login, profile)
-- `/api/github/*` - GitHub integration endpoints
+- `/api/github/*` - GitHub integration endpoints (OAuth, repos, file browsing)
+- `/api/ai/*` - AI features (explain code, usage stats, history)
 - `/` and `/health` - Health check endpoints
 
 ## Current Implementation Status
 
 **Completed:**
 - User authentication system with JWT
-- Basic React Native app structure with navigation
+- Mobile-first React web app with responsive design
 - Database schema and migrations
-- GitHub OAuth preparation
+- GitHub OAuth integration (login and repository access)
+- GitHub repository browser with file viewer
+- Syntax highlighting for 20+ languages
+- AI code analysis with OpenRouter/Gemini 2.5 Flash Lite
+- Modern UI with hamburger menu navigation
+- Single repository selection workflow
+- AI chat with code pre-population from file viewer
+- Usage tracking and rate limiting
 
 **In Progress:**
-- AI chat interface (placeholder screens exist)
-- GitHub repository browsing
-- Trello integration
+- Code editing and commit functionality
 - Background job processing with BullMQ
+- Trello integration
 - RevenueCat subscription integration
 
 ## Key Development Notes
 
-- The project follows an Android-first strategy for faster deployment
+- The project currently uses a mobile-first React web app for rapid prototyping
+- React Native mobile app is planned for future development
 - Implements a freemium model (15 AI requests/day free, $9.99/month Pro)
 - Environment configuration examples are in `backend/.env.example`
 - All API responses should maintain consistent error handling patterns established in auth routes
-- Mobile screens use a consistent navigation structure with proper TypeScript typing
+- Uses Docker Compose for local development with one-command setup (`npm run dev`)
+- OpenRouter API key is required in backend/.env for AI functionality
+- GitHub OAuth credentials must be configured in backend/.env for GitHub integration

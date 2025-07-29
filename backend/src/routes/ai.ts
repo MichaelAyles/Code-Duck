@@ -1,5 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { prisma } from '../lib/prisma';
+import { openRouterService } from '../lib/openrouter';
 
 interface ExplainRequest {
   code: string;
@@ -7,12 +8,6 @@ interface ExplainRequest {
   context?: string;
 }
 
-interface ExplainResponse {
-  explanation: string;
-  suggestions?: string[];
-  complexity: 'low' | 'medium' | 'high';
-  requestId: string;
-}
 
 export async function aiRoutes(app: FastifyInstance) {
   
@@ -67,8 +62,9 @@ export async function aiRoutes(app: FastifyInstance) {
         return reply.code(400).send({ error: 'Code too long (max 10,000 characters)' });
       }
 
-      // For now, use a mock AI response (replace with actual AI service later)
-      const explanation = await generateMockExplanation(code, language, context);
+      // Use OpenRouter AI service for real code analysis
+      app.log.info(`Processing AI request for ${language} code (${code.length} chars)`);
+      const explanation = await openRouterService.explainCode(code, language, context);
       
       // Log the AI request
       const aiRequest = await prisma.aIRequest.create({
@@ -77,7 +73,7 @@ export async function aiRoutes(app: FastifyInstance) {
           type: 'explain',
           inputData: { code, language, context },
           outputData: explanation as any,
-          tokensUsed: Math.floor(code.length / 4), // Rough estimate
+          tokensUsed: explanation.tokensUsed,
         }
       });
 
@@ -162,35 +158,3 @@ export async function aiRoutes(app: FastifyInstance) {
   });
 }
 
-// Mock AI explanation generator (replace with actual AI service)
-async function generateMockExplanation(code: string, language: string, context?: string): Promise<ExplainResponse> {
-  // Simple analysis for demo purposes
-  const lines = code.split('\n').length;
-  const hasLoops = /for|while|forEach/.test(code);
-  const hasFunctions = /function|def|=>/.test(code);
-  const hasConditionals = /if|switch|case/.test(code);
-  
-  let complexity: 'low' | 'medium' | 'high' = 'low';
-  if (lines > 20 || (hasLoops && hasFunctions)) complexity = 'medium';
-  if (lines > 50 || (hasLoops && hasFunctions && hasConditionals)) complexity = 'high';
-
-  const suggestions = [];
-  if (!hasFunctions && lines > 10) suggestions.push('Consider breaking this into smaller functions');
-  if (hasLoops && !code.includes('const') && !code.includes('let')) suggestions.push('Consider using const/let for better variable scoping');
-  if (language === 'javascript' && !code.includes('//')) suggestions.push('Add comments to explain complex logic');
-
-  const explanation = `This ${language} code snippet contains ${lines} lines. ` +
-    `${hasFunctions ? 'It defines functions which help organize the code. ' : ''}` +
-    `${hasLoops ? 'It uses loops for iteration. ' : ''}` +
-    `${hasConditionals ? 'It includes conditional logic for decision making. ' : ''}` +
-    `The code complexity is ${complexity}. ` +
-    `${context ? `Given the context: ${context}, this code appears to be part of a larger system. ` : ''}` +
-    `Overall, this is a ${complexity === 'low' ? 'straightforward' : complexity === 'medium' ? 'moderately complex' : 'complex'} piece of code.`;
-
-  return {
-    explanation,
-    suggestions: suggestions.length > 0 ? suggestions : undefined,
-    complexity,
-    requestId: '' // Will be set by caller
-  };
-}
